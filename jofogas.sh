@@ -24,9 +24,21 @@ function getPrice {
   echo "Prices saved to prices.csv"
 }
 
+function getDate {
+  echo "Date" > date.csv
+  grep -o '<div class="time">[^<]*</div>' jofogas.html | while read -r date; do
+    date=$(echo "$date" | sed 's/<[^>]*>//g' | tr -d '[:space:]')
+    echo "$date" >> date.csv
+  done
+  echo "Dates saved to date.csv"
+}
+
+
+
 
 
 # Call the getPage and getPrice functions
 getPage
 getPrice
+getDate
 
