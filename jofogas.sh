@@ -33,6 +33,14 @@ function getDate {
   echo "Dates saved to date.csv"
 }
 
+function getLink {
+  echo "Link" > links.csv
+  grep -o '<a href="[^"]*"' jofogas.html | while read -r link; do
+    link=$(echo "$link" | cut -d '"' -f 2)
+    echo "https://www.jofogas.hu$link" >> links.csv
+  done
+  echo "Links saved to links.csv"
+}
 
 
 
@@ -41,4 +49,5 @@ function getDate {
 getPage
 getPrice
 getDate
+getLink
 
