@@ -33,21 +33,34 @@ function getDate {
   echo "Dates saved to date.csv"
 }
 
-function getLink {
+
+function getAllLinks {
   echo "Link" > links.csv
   grep -o '<a href="[^"]*"' jofogas.html | while read -r link; do
     link=$(echo "$link" | cut -d '"' -f 2)
-    echo "https://www.jofogas.hu$link" >> links.csv
+    echo "$link" >> alllinks.csv
   done
-  echo "Links saved to links.csv"
+  echo "Links saved to alllinks.csv"
+}
+
+function getWorkingLinks {
+  echo "Link" > links.csv
+  grep -o '<a href="https://www.jofogas.hu/\(csongrad\|budapest\|gyor_moson_sopron\|baranya\|fejer\|szabolcs_szatmar_bereg\|heves\|pest\|veszprem\)[^"]*"' jofogas.html | while read -r link; do
+    link=$(echo "$link" | cut -d '"' -f 2)
+    echo "$link" >> workinglinks.csv
+  done
+  echo "Links saved to workinglinks.csv"
 }
 
 
-
+function getItems {
+    sed -n '/<div class="col-xs-12 box listing list-item gallery-items   has-bottom-line   priorized  reListElement"/,/<\/div>/p' jofogas.html > items.html
+    sed -i 's/^[ \t]*//' items.html
+}
 
 # Call the getPage and getPrice functions
 getPage
-getPrice
-getDate
-getLink
+getAllLinks
+getWorkingLinks
+getItems
 
