@@ -58,9 +58,40 @@ function getItems {
     sed -i 's/^[ \t]*//' items.html
 }
 
+
+
+function loopLinks {
+  # Check if filename argument is provided
+  if [[ $# -eq 0 ]]; then
+    echo "Usage: $0 filename"
+    exit 1
+  fi
+  
+  # Read links from file and loop through them
+  while read -r link; do
+    # Extract price from link using curl and grep
+    price=$(curl -s "$link" | grep -o '<meta itemprop="price" content="[0-9]*" />' | sed 's/.*content="\([0-9]*\)".*/\1/' | tr -d ' ')
+    date=$(curl -s "$link" | grep -F -w 'class="time"' --text | sed 's/.*<span class="time">//g;s/<\/span>.*//g')
+
+    
+    # Print link and price to console
+    echo "$link, $price, $date"
+    
+    # Append link and price to output file
+    echo "$link, $price, $date" >> ads.csv
+    done < "$1"
+  
+    rm "workinglinks.csv"
+}
+
+# Call loopLinks function with filename argument
+
+
+
 # Call the getPage and getPrice functions
 getPage
 getAllLinks
 getWorkingLinks
 getItems
+loopLinks "workinglinks.csv"
 
