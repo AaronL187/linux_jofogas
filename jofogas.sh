@@ -1,25 +1,25 @@
 #!/bin/bash
 
-# Check if keyword argument is provided
+# Megnézzük, hogy a felhasználó megadta-e a szükséges paramétereket
 if [ "$#" -ne 2 ]; then
   echo "Usage: $0 <keyword> <max_price>"
   exit 1
 fi
 
-# Encode keyword for URL
+# Kompatibilissá tesszük a kulccszót a linkkel
 keyword=$(echo "$1" | sed 's/ /+/g')
 url="https://www.jofogas.hu/magyarorszag?q=$keyword"
 max_price=$(($2))
 
 
-# Make HTTP request and save HTML content to file
+# HTTP lekérdezést csinálunk az URL-re
 function getPage {
   curl -s -o jofogas.html "$url"
 }
 
 
 
-#Az összes elsőoldalas link lementése a keresés alapján -> ezek relevánsak nekünk
+#Az összes link lementése a keresés alapján -> ezek relevánsak nekünk
 function getAllLinks {
    [ -e alllinks.csv ] && rm alllinks.csv && echo "Létezett az 'alllinks.csv' ezért eltávolítottam azt"
   echo "Link" > links.csv
@@ -30,6 +30,7 @@ function getAllLinks {
   echo "Links saved to alllinks.csv"
 }
 
+#Azok a specifikus linkek lekérdezése, amik a hírdetésekre mutatnak
 function getWorkingLinks {
   [ -e workinglinks.csv ] && rm workinglinks.csv && echo "Létezett az 'workinglinks.csv' ezért eltávolítottam azt"
   echo "Link" > links.csv
@@ -40,7 +41,7 @@ function getWorkingLinks {
   echo "Links saved to workinglinks.csv"
 }
 
-# Call loopLinks function with filename argument
+# Körbe loopolunk a workinglinkseken és kivesszük belőle a price-ot, dátumot, amennyiben eleget tesznek a feltételnek ki is írjuk egy fájlba
 function loopLinks {
   # Check if filename argument is provided
   if [[ $# -eq 0 ]]; then
@@ -48,18 +49,18 @@ function loopLinks {
     exit 1
   fi
   [ -e ads.csv ] && rm ads.csv && echo "Létezett az 'ads.csv' ezért eltávolítottam azt"
-  # Read links from file and loop through them
+  # Linkek beolvasása körbe loopolás
 	counter=1
 	while read -r link; do
-	  # Extract price from link using curl and grep
+	  # Ár és dátum kiszedése greppel
 	  price=$(curl -s "$link" | grep -o '<meta itemprop="price" content="[0-9]*" />' | sed 's/.*content="\([0-9]*\)".*/\1/' | tr -d ' ')
 	  printf "A termék ára: %-15s ------ Az általad megadott ár: %-15s \n" "$price" "$max_price"
 	  date=$(curl -s "$link" | grep -F -w 'class="time"' --text | sed 's/<[^>]*>//g')
 	   if [ $(($price)) -le $(($max_price)) ]; then
-	    # Format the link, price, and date with equal columns
+	    # Formázás konzolra
 	    printf "\n A termék kiiírásra került a listádba \n %-5s | %-60s | %-10s | %-20s\n" "$counter" "$link" "$price Ft" "$date"
 	    
-	    # Append link, price, and date to output file
+	    # Sorszám, Link, Ár, Dátum hozzáadása egy fájlhoz
 	    printf "%-5s | %-130s | %-10s | %-20s\n" "$counter" "$link" "$price Ft" "$date" >> ads.csv
 	    
 	    ((counter++))
@@ -69,7 +70,7 @@ function loopLinks {
 }
 
 
-# Call the getPage and getPrice functions
+# Szükséges funkciók meghívása
 getPage
 getAllLinks
 getWorkingLinks
