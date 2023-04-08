@@ -3,7 +3,7 @@
 <h2 class="code-line" data-line-start=2 data-line-end=3 ><a id="Script_neve_jofogassh_2"></a>Script neve: <a href="http://jofogas.sh">jofogas.sh</a></h2>
 <p class="has-line-data" data-line-start="4" data-line-end="5">Ez a szkript a <a href="http://www.jofogas.hu">www.jofogas.hu</a> weboldalon végzett keresések eredményeit dolgozza fel. A szkript egy kulcsszó és egy maximális ár megadásával hajt végre keresést, majd kiírja az összes talált hirdetést, amelynek az ára nem haladja meg a maximális árat.</p>
 <h3 class="code-line" data-line-start=6 data-line-end=7 ><a id="Hasznlat_6"></a>Használat:</h3>
-<pre><code class="has-line-data" data-line-start="8" data-line-end="10">./search_ads.sh &lt;kulcsszó&gt; &lt;maximális_ár&gt;
+<pre><code class="has-line-data" data-line-start="8" data-line-end="10">./jofogas.sh &lt;kulcsszó&gt; &lt;maximális_ár&gt;
 </code></pre>
 <h3 class="code-line" data-line-start=11 data-line-end=12 ><a id="Paramterek_11"></a>Paraméterek:</h3>
 <ul>
